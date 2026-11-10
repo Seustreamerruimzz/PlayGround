@@ -3,15 +3,17 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
   'use strict';
   const canvas=document.querySelector('#game'), frame=document.querySelector('.game-frame');
   const ui={intro:document.querySelector('#intro'),ending:document.querySelector('#ending'),endingTitle:document.querySelector('#endingTitle'),endingText:document.querySelector('#endingText'),start:document.querySelector('#startButton'),restart:document.querySelector('#restartButton'),hud:document.querySelector('#hud'),healthFill:document.querySelector('#healthFill'),healthText:document.querySelector('#healthText'),staminaFill:document.querySelector('#staminaFill'),level:document.querySelector('#level'),kills:document.querySelector('#killCount'),objective:document.querySelector('#objectiveText'),bossHud:document.querySelector('#bossHud'),bossFill:document.querySelector('#bossFill'),toast:document.querySelector('#waveToast'),pause:document.querySelector('#pauseIndicator'),flash:document.querySelector('#damageFlash'),sound:document.querySelector('#soundToggle'),soundLabel:document.querySelector('#soundLabel'),flaskCount:document.querySelector('#flaskCount'),lockLabel:document.querySelector('#lockLabel'),loading:document.querySelector('#loading')};
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.15;
-  const scene=new THREE.Scene(); scene.background=new THREE.Color('#16151d'); scene.fog=new THREE.FogExp2('#25202a',.012);
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.3;
+  const scene=new THREE.Scene(); scene.background=new THREE.Color('#16151d'); scene.fog=new THREE.FogExp2('#211a1b',.009);
   const camera=new THREE.PerspectiveCamera(54,1,.1,180); camera.position.set(0,5,10);
-  scene.add(new THREE.HemisphereLight('#a9a9c5','#29201d',1.45));
-  const moonLight=new THREE.DirectionalLight('#c0b9bb',2.4);moonLight.position.set(-7,13,5);moonLight.castShadow=true;moonLight.shadow.mapSize.set(1024,1024);moonLight.shadow.camera.left=-18;moonLight.shadow.camera.right=18;moonLight.shadow.camera.top=18;moonLight.shadow.camera.bottom=-18;moonLight.shadow.bias=-.0005;scene.add(moonLight);
+  scene.add(new THREE.HemisphereLight('#bbb7b0','#241c1c',1.1));
+  const moonLight=new THREE.DirectionalLight('#d3c4a4',2.7);moonLight.position.set(-7,13,5);moonLight.castShadow=true;moonLight.shadow.mapSize.set(1024,1024);moonLight.shadow.camera.left=-18;moonLight.shadow.camera.right=18;moonLight.shadow.camera.top=18;moonLight.shadow.camera.bottom=-18;moonLight.shadow.bias=-.0005;scene.add(moonLight);
   const warm=new THREE.PointLight('#d35c37',22,18,2);warm.position.set(-5,2,1);scene.add(warm);
   const clock=new THREE.Clock(), keys=new Set(), touch={};let game=null,soundOn=false,audioCtx=null,lastToast=0;
-  const mat=(color,rough=.85,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
-  const mats={stone:mat('#39343a'),dark:mat('#19171d'),rust:mat('#64433a'),bone:mat('#b7a58d'),metal:mat('#53545b',.4,.72),gold:mat('#a78353',.42,.65),cloak:mat('#30252d'),red:mat('#812f32'),skin:mat('#9b7c69'),glow:new THREE.MeshStandardMaterial({color:'#d76842',emissive:'#c64125',emissiveIntensity:2}),grass:mat('#343129')};
+  // A stepped light ramp gives the models the hard cel-shaded values of hand-painted dark-fantasy animation.
+  const toonRamp=new THREE.DataTexture(new Uint8Array([31,29,34,255,92,81,79,255,168,151,127,255,240,220,181,255]),4,1,THREE.RGBAFormat);toonRamp.magFilter=THREE.NearestFilter;toonRamp.minFilter=THREE.NearestFilter;toonRamp.needsUpdate=true;
+  const mat=(color,rough=.85,metal=0)=>new THREE.MeshToonMaterial({color,gradientMap:toonRamp});
+  const mats={stone:mat('#39343a'),dark:mat('#19171d'),rust:mat('#64433a'),bone:mat('#b7a58d'),metal:mat('#53545b'),gold:mat('#a78353'),cloak:mat('#30252d'),red:mat('#812f32'),skin:mat('#9b7c69'),glow:new THREE.MeshBasicMaterial({color:'#d76842'}),grass:mat('#343129')};
   const boxGeo=new THREE.BoxGeometry(1,1,1),sphereGeo=new THREE.IcosahedronGeometry(1,1),cylinderGeo=new THREE.CylinderGeometry(1,1,1,8);
   function mesh(geo,material,parent,x=0,y=0,z=0,sx=1,sy=1,sz=1){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
   function group(parent,x=0,y=0,z=0){const g=new THREE.Group();g.position.set(x,y,z);parent.add(g);return g;}
@@ -19,7 +21,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
   // The blood moon and a broken ring of abbey ruins frame the arena.
   const moon=mesh(new THREE.SphereGeometry(3,24,16),new THREE.MeshBasicMaterial({color:'#9b504b'}),scene,13,12,-32);moon.material.transparent=true;moon.material.opacity=.8;
   const moonGlow=new THREE.PointLight('#733a47',35,70,2);moonGlow.position.set(13,11,-22);scene.add(moonGlow);
-  const floor=mesh(new THREE.CircleGeometry(30,64),mat('#28252a'),scene,0,-.12,0);floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;
+  const floor=mesh(new THREE.CircleGeometry(30,64),mat('#36302b'),scene,0,-.12,0);floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;
   const center=mesh(new THREE.CircleGeometry(11,40),mat('#353036'),scene,0,-.1,0);center.rotation.x=-Math.PI/2;
   const outer=mesh(new THREE.TorusGeometry(21,.12,6,96),mat('#4b403b'),scene,0,.02,0);outer.rotation.x=Math.PI/2;
   const ring=mesh(new THREE.TorusGeometry(10,.09,6,64),mat('#766046'),scene,0,.03,0);ring.rotation.x=Math.PI/2;
@@ -32,17 +34,17 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
   const ashGeo=new THREE.BufferGeometry(),ashPos=new Float32Array(220*3);for(let i=0;i<220;i++){ashPos[i*3]=(Math.random()-.5)*56;ashPos[i*3+1]=Math.random()*12;ashPos[i*3+2]=(Math.random()-.5)*50;}ashGeo.setAttribute('position',new THREE.BufferAttribute(ashPos,3));const ash=new THREE.Points(ashGeo,new THREE.PointsMaterial({color:'#d4b895',size:.055,transparent:true,opacity:.58}));scene.add(ash);
   function makeHumanoid(boss=false){
     const root=group(scene);const body=group(root,0,.05,0);const armor= boss?mat('#28232c',.48,.5):mat('#353139',.55,.45);const robe=boss?mat('#211a25'):mats.cloak;
-    mesh(new THREE.CylinderGeometry(.3,.48,1.05,7),robe,body,0,1.12,0,1,1,1);
-    mesh(new THREE.IcosahedronGeometry(.34,1),armor,body,0,1.9,0,.92,1.02,.82);
-    mesh(new THREE.SphereGeometry(.24,10,8),boss?mats.bone:mats.metal,body,0,2.42,0,.9,1.02,.9);
-    const helm=mesh(new THREE.ConeGeometry(.26,.55,6),boss?mats.dark:mats.metal,body,0,2.72,0);helm.rotation.z=.08;
+    mesh(new THREE.CylinderGeometry(.3,.58,1.05,6),robe,body,0,1.12,0,1,1,1);
+    mesh(new THREE.IcosahedronGeometry(.34,0),armor,body,0,1.9,0,.92,1.02,.82);
+    mesh(new THREE.SphereGeometry(.24,7,5),boss?mats.bone:mats.metal,body,0,2.42,0,.9,1.02,.9);
+    const helm=mesh(new THREE.ConeGeometry(.26,.55,5),boss?mats.dark:mats.metal,body,0,2.72,0);helm.rotation.z=.08;
     mesh(boxGeo,mats.dark,body,0,2.4,.205,.28,.09,.07);
-    const shoulderL=group(body,-.39,1.85,0),shoulderR=group(body,.39,1.85,0);mesh(new THREE.IcosahedronGeometry(.3,1),boss?mats.red:mats.metal,shoulderL,0,0,0,1,.85,1);mesh(new THREE.IcosahedronGeometry(.3,1),boss?mats.red:mats.metal,shoulderR,0,0,0,1,.85,1);
+    const shoulderL=group(body,-.39,1.85,0),shoulderR=group(body,.39,1.85,0);mesh(new THREE.IcosahedronGeometry(.3,0),boss?mats.red:mats.metal,shoulderL,0,0,0,1,.85,1);mesh(new THREE.IcosahedronGeometry(.3,0),boss?mats.red:mats.metal,shoulderR,0,0,0,1,.85,1);
     const armL=group(shoulderL,0,-.18,0),armR=group(shoulderR,0,-.18,0);mesh(cylinderGeo,armor,armL,0,-.34,0,.13,.54,.13);mesh(cylinderGeo,armor,armR,0,-.34,0,.13,.54,.13);
     const legL=group(body,-.18,.72,0),legR=group(body,.18,.72,0);mesh(cylinderGeo,armor,legL,0,-.3,0,.16,.66,.17);mesh(cylinderGeo,armor,legR,0,-.3,0,.16,.66,.17);
     // Long, readable blade silhouette.
-    const sword=group(armR,0,-.66,.08);mesh(boxGeo,mats.gold,sword,0,0,0,.34,.08,.09);mesh(boxGeo,mats.dark,sword,0,-.22,0,.09,.42,.1);const blade=mesh(new THREE.ConeGeometry(.12,1.45,4),mats.metal,sword,0,-1.02,0);blade.rotation.z=Math.PI;
-    if(boss){for(let s of [-1,1]){const horn=mesh(new THREE.ConeGeometry(.12,.95,5),mats.bone,body,s*.28,2.98,0);horn.rotation.z=-s*.48;}}
+    const sword=group(armR,0,-.66,.08);mesh(boxGeo,mats.gold,sword,0,0,0,.34,.08,.09);mesh(boxGeo,mats.dark,sword,0,-.22,0,.09,.42,.1);const blade=mesh(new THREE.ConeGeometry(.12,1.45,3),mats.metal,sword,0,-1.02,0);blade.rotation.z=Math.PI;
+    if(boss){for(let s of [-1,1]){const horn=mesh(new THREE.ConeGeometry(.12,.95,4),mats.bone,body,s*.28,2.98,0);horn.rotation.z=-s*.48;}}
     return {root,body,armL,armR,legL,legR,sword,helm,baseY:0};
   }
   let heroVisual=makeHumanoid(false);heroVisual.root.position.set(-.8,0,3);
