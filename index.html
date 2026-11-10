@@ -19,7 +19,7 @@
     </header>
 
     <section class="game-frame" aria-label="Jogo Cinzas do Eclipse">
-      <canvas id="game" width="1280" height="720" aria-label="Jogo de ação dark fantasy"></canvas>
+      <canvas id="game" aria-label="Jogo de ação soulslike em 3D"></canvas>
       <div class="vignette"></div>
       <div class="hud" id="hud" hidden>
         <div class="hero-status">
@@ -31,7 +31,9 @@
           </div>
         </div>
         <div class="objective"><span class="objective-icon">✦</span><div><small>OBJETIVO</small><b id="objectiveText">Atravesse a estrada dos ossos</b></div></div>
-        <div class="kill-count"><span id="killCount">00</span><small>ABOMINAÇÕES<br>ABATIDAS</small></div>
+        <div class="kill-count"><span id="killCount">00</span><small>ALMAS<br>RECOLHIDAS</small></div>
+        <div class="flask" id="flask"><span>✦</span><b id="flaskCount">03</b><small>FRASCO</small></div>
+        <div class="lock-label" id="lockLabel">ALVO FIXADO</div>
       </div>
       <div class="wave-toast" id="waveToast"></div>
       <div class="boss-hud" id="bossHud" hidden><div class="boss-title"><span>✦</span> O PAVOR SEM ROSTO <span>✦</span></div><div class="boss-bar"><span id="bossFill"></span></div></div>
@@ -41,7 +43,7 @@
           <h1>CINZAS <em>DO</em><br>ECLIPSE</h1>
           <p class="intro-desc">Quando a lua sangra, os mortos lembram<br>o caminho de volta para casa.</p>
           <button class="primary-button" id="startButton">INICIAR A CAÇADA <span>→</span></button>
-          <div class="intro-note">UMA HISTÓRIA ORIGINAL DE DARK FANTASY</div>
+          <div class="intro-note">UM COMBATE SOMBRIO EM 3D · UMA HISTÓRIA ORIGINAL</div>
         </div>
         <div class="intro-bottom"><span>EDIÇÃO DA MEIA-NOITE</span><span>◈</span><span>01 — 03</span></div>
       </div>
@@ -53,17 +55,18 @@
       </div>
       <div class="pause-indicator" id="pauseIndicator" hidden>PAUSADO <small>PRESSIONE ESC PARA CONTINUAR</small></div>
       <div class="mobile-controls" id="mobileControls" aria-label="Controles de toque">
-        <div class="dpad"><button data-control="left" aria-label="Mover para esquerda">←</button><button data-control="right" aria-label="Mover para direita">→</button></div>
-        <div class="action-pad"><button data-control="dodge" aria-label="Esquivar">↗</button><button data-control="attack" aria-label="Atacar">⚔</button><button data-control="jump" aria-label="Pular">↑</button></div>
+        <div class="dpad"><button data-control="left" aria-label="Mover para esquerda">←</button><button data-control="right" aria-label="Mover para direita">→</button><button data-control="forward" aria-label="Avançar">↑</button><button data-control="back" aria-label="Recuar">↓</button></div>
+        <div class="action-pad"><button data-control="dodge" aria-label="Esquivar">↗</button><button data-control="attack" aria-label="Atacar">⚔</button><button data-control="heal" aria-label="Usar frasco">✦</button><button data-control="lock" aria-label="Fixar alvo">◎</button></div>
       </div>
       <div class="damage-flash" id="damageFlash"></div>
+      <div class="loading" id="loading">DESPERTANDO AS CINZAS…</div>
     </section>
 
     <footer class="bottom-bar">
-      <div class="controls-legend"><span><kbd>A</kbd><kbd>D</kbd> MOVER</span><span><kbd>ESPAÇO</kbd> PULAR</span><span><kbd>J</kbd> GOLPEAR</span><span><kbd>K</kbd> ESQUIVAR</span><span><kbd>ESC</kbd> PAUSAR</span></div>
+      <div class="controls-legend"><span><kbd>WASD</kbd> MOVER</span><span><kbd>J</kbd> GOLPEAR</span><span><kbd>K</kbd> ESQUIVAR</span><span><kbd>E</kbd> FRASCO</span><span><kbd>TAB</kbd> FIXAR ALVO</span><span><kbd>ESC</kbd> PAUSAR</span></div>
       <div class="footer-caption"><span class="small-cross">✦</span> NENHUM JURAMENTO É FEITO SEM SANGUE <span class="small-cross">✦</span></div>
     </footer>
   </main>
-  <script src="game.js"></script>
+  <script type="module" src="game.js"></script>
 </body>
 </html>
