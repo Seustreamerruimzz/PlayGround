@@ -6,3 +6,12 @@ body{background:radial-gradient(ellipse at 50% 45%,#32211d 0,#17110f 68%)}
 .game-frame{border-color:#806348;box-shadow:0 22px 65px #000b,0 0 0 5px #1a1310}
 .vignette{box-shadow:inset 0 0 65px 16px #100b09a8,inset 0 0 10px #0008}
 .intro,.ending{background:linear-gradient(90deg,#120e0dc7 0%,#1a131078 49%,#1a131078 60%,#120e0dc7 100%)}
+/* Fixed-position analog movement joystick for touch screens. */
+.move-joystick{width:112px;height:128px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.joystick-base{width:104px;height:104px;position:relative;display:block;border:2px solid #c5a16b88;border-radius:50%;background:radial-gradient(circle,#42342b99 0 42%,#17120fd9 72%);box-shadow:inset 0 3px 12px #000b,0 2px 9px #0008;touch-action:none}
+.joystick-base:before,.joystick-base:after{content:'';position:absolute;background:#c5a16b30;pointer-events:none}
+.joystick-base:before{left:50%;top:12%;bottom:12%;width:1px}.joystick-base:after{top:50%;left:12%;right:12%;height:1px}
+.joystick-knob{position:absolute;left:50%;top:50%;width:42px;height:42px;margin:-21px;border:2px solid #e1c18b;border-radius:50%;background:radial-gradient(circle at 35% 30%,#917451,#392a21 72%);box-shadow:0 3px 10px #000b;will-change:transform;pointer-events:none}
+.joystick-caption{color:#e8d8baaa;font-size:8px;font-weight:700;letter-spacing:1.5px;text-shadow:0 1px 4px #000}
+.action-pad{gap:8px}.action-pad button{width:50px;height:50px}
+@media(max-width:380px){.move-joystick{transform:scale(.88);transform-origin:bottom left}.action-pad{transform:scale(.9);transform-origin:bottom right}}
