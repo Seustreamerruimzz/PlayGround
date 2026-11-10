@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#100d12" />
+  <title>Cinzas do Eclipse — Uma caçada sombria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="wordmark" href="#" aria-label="Cinzas do Eclipse"><span class="brand-mark">✦</span><span>CINZAS <i>DO</i> ECLIPSE</span></a>
+      <div class="chapter">CAPÍTULO I <span>·</span> A ESTRADA DOS OSSOS</div>
+      <button class="sound-toggle" id="soundToggle" aria-label="Ativar ou desativar som"><span class="sound-icon">♪</span><span>SOM <b id="soundLabel">OFF</b></span></button>
+    </header>
+
+    <section class="game-frame" aria-label="Jogo Cinzas do Eclipse">
+      <canvas id="game" width="1280" height="720" aria-label="Jogo de ação dark fantasy"></canvas>
+      <div class="vignette"></div>
+      <div class="hud" id="hud" hidden>
+        <div class="hero-status">
+          <div class="hero-portrait">☠</div>
+          <div class="status-bars">
+            <div class="name-line"><span>O ERRANTE</span><span class="level">NÍVEL <b id="level">01</b></span></div>
+            <div class="bar hp"><span id="healthFill"></span><i>VITALIDADE</i><b id="healthText">100 / 100</b></div>
+            <div class="bar stamina"><span id="staminaFill"></span><i>VIGOR</i></div>
+          </div>
+        </div>
+        <div class="objective"><span class="objective-icon">✦</span><div><small>OBJETIVO</small><b id="objectiveText">Atravesse a estrada dos ossos</b></div></div>
+        <div class="kill-count"><span id="killCount">00</span><small>ABOMINAÇÕES<br>ABATIDAS</small></div>
+      </div>
+      <div class="wave-toast" id="waveToast"></div>
+      <div class="boss-hud" id="bossHud" hidden><div class="boss-title"><span>✦</span> O PAVOR SEM ROSTO <span>✦</span></div><div class="boss-bar"><span id="bossFill"></span></div></div>
+      <div class="overlay intro" id="intro">
+        <div class="intro-copy">
+          <p class="eyebrow"><span></span> UMA LENDA DE SANGUE E CINZAS <span></span></p>
+          <h1>CINZAS <em>DO</em><br>ECLIPSE</h1>
+          <p class="intro-desc">Quando a lua sangra, os mortos lembram<br>o caminho de volta para casa.</p>
+          <button class="primary-button" id="startButton">INICIAR A CAÇADA <span>→</span></button>
+          <div class="intro-note">UMA HISTÓRIA ORIGINAL DE DARK FANTASY</div>
+        </div>
+        <div class="intro-bottom"><span>EDIÇÃO DA MEIA-NOITE</span><span>◈</span><span>01 — 03</span></div>
+      </div>
+      <div class="overlay ending" id="ending" hidden>
+        <p class="eyebrow"><span></span> A NOITE AINDA NÃO ACABOU <span></span></p>
+        <h2 id="endingTitle">A ESTRADA<br><em>CONTINUA</em></h2>
+        <p id="endingText">A primeira noite terminou. As cinzas guardam seu nome.</p>
+        <button class="primary-button" id="restartButton">VOLTAR À ESTRADA <span>→</span></button>
+      </div>
+      <div class="pause-indicator" id="pauseIndicator" hidden>PAUSADO <small>PRESSIONE ESC PARA CONTINUAR</small></div>
+      <div class="mobile-controls" id="mobileControls" aria-label="Controles de toque">
+        <div class="dpad"><button data-control="left" aria-label="Mover para esquerda">←</button><button data-control="right" aria-label="Mover para direita">→</button></div>
+        <div class="action-pad"><button data-control="dodge" aria-label="Esquivar">↗</button><button data-control="attack" aria-label="Atacar">⚔</button><button data-control="jump" aria-label="Pular">↑</button></div>
+      </div>
+      <div class="damage-flash" id="damageFlash"></div>
+    </section>
+
+    <footer class="bottom-bar">
+      <div class="controls-legend"><span><kbd>A</kbd><kbd>D</kbd> MOVER</span><span><kbd>ESPAÇO</kbd> PULAR</span><span><kbd>J</kbd> GOLPEAR</span><span><kbd>K</kbd> ESQUIVAR</span><span><kbd>ESC</kbd> PAUSAR</span></div>
+      <div class="footer-caption"><span class="small-cross">✦</span> NENHUM JURAMENTO É FEITO SEM SANGUE <span class="small-cross">✦</span></div>
+    </footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
